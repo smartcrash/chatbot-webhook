@@ -11,7 +11,7 @@ authorName: 'Serverless, inc.'
 authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 -->
 
-# Cliengo Chatbot Fulfillment with Serverless Framework
+# Cliengo Chatbot Webhooks with Serverless Framework
 
 This template allows you to create serverless webhooks for Chatbots Cliengo using AWS, Serverless.com and with Node.js.
 
