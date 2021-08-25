@@ -9,18 +9,19 @@ provider:
   lambdaHashingVersion: '20201221'
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          path: /
-          method: get
   chatbotWebhook:
     handler: handler.chatbotWebhook
     events:
       - http:
           path: /chatbotWebhook
+          method: post
+  chatbotConfig:
+    handler: handler.chatbotConfig
+    events:
+      - http:
+          path: /chatbotConfig
           method: get
+          
 
 plugins:
   - serverless-offline

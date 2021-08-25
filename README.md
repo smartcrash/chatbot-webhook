@@ -13,41 +13,73 @@ authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 
 # Serverless Cliengo Chatbot Webhooks
 
-This template allows you to create serverless webhooks for Chatbots Cliengo using AWS, Serverless.com and with Node.js.
+Esta proyecto permite crear webhooks Serverless para Chatbots Cliengo usando AWS, Serverless.com y con Node.js.
 
-Chatbot JSON's for Request and Response, and the complete workflow documentation is here: 
+Los JSON de request y response y la documentación completa del flujo de trabajo de Chatbots Cliengo está en:
 https://developers.cliengo.com/docs/new-message-webhook#response-json-example
 
 
 ### Local development
 
-You can invoke your function locally emulating API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+Para levantar un server localmente emulando API Gateway y Lambda localmente se utiliza el módulo `serverless-offline`. Ejecute el comando:
 
 ```bash
 serverless plugin install -n serverless-offline
 ```
 
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
+Agregará el complemento `serverless-offline` a `devDependencies` en el archivo `package.json` y también lo agregará a `plugins` en `serverless.yml`.
 
-After installation, you can start local emulation with:
+Después de la instalación, puede iniciar el server local con:
 
 ```
 serverless offline
 ```
 
 
+Importante: Los cambios en el código se reflejan automáticamente, a excepción de cambios en el archivo `serverless.yml`
+
+
+
+### Ngrok webhooks en local
+
+Con ngrok.com puede recibir webhooks de chatbot en su entorno local.
+Una vez que tenga `serverless offline` ejecutándose localmente, puede ejecutar el comando:
+
+```
+ngrok http 3000
+```
+
+### Configure Webhooks for a Chatbot
+
+Para simplificar la configuración de `global_fulfillment_url` (es la url donde se recibirán los webhooks de un determinado chatbot) existe en este proyecto un endpoint para facilitar su configuración
+
+Configure con los datos de su cuenta de Cliengo en el archivo `handler.js` lo valores:
+- API_KEY
+- websiteId
+- global_fulfillment_url
+
+
+Luego ingresa a http://localhost:3000/dev/chatbotConfig para actualizar el global_fulfillment_url de tu chatbot.
+
+
+### Probar un Chatbot con webhooks
+
+Una vez configurado los webhooks ingresa a https://lw.stagecliengo.com/?websiteId=`websiteId` para probar tu chatbot y recibir un webhook por cada mensaje en tu server 
+
+
 ### Deployment
 
-This example is made to work with the Serverless Framework dashboard which includes advanced features like CI/CD, monitoring, metrics, etc.
+Este ejemplo está diseñado para funcionar con el panel de Serverless Framework que incluye funciones avanzadas como CI / CD, monitoreo, métricas, etc.
 
 ```
 $ serverless login
 $ serverless deploy
 ```
 
-To deploy without the dashboard you will need to remove `org` and `app` fields from the `serverless.yml`, and you won’t have to run `sls login` before deploying.
+Para implementar sin el dashboard, deberá eliminar los campos `org` y` app` del `serverless.yml`, y no tendrá que ejecutar` sls login` antes de deployar.
 
-After running deploy, you should see output similar to:
+
+Después de ejecutar la implementación, debería ver un resultado similar a:
 
 ```bash
 Serverless: Packaging service...
@@ -80,36 +112,26 @@ layers:
   None
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+_Nota_: En su forma actual, después de la implementación, su API es pública y cualquier persona puede invocarla. Para implementaciones de producción, es posible que desee configurar un autorizador. Para obtener detalles sobre cómo hacerlo, consulte [http event docs] (https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
 
 ### Invocation
 
-After successful deployment, you can call the created application via HTTP:
+Después de una implementación exitosa, puede llamar a la aplicación creada a través de HTTP:
 
 ```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/...
 ```
 
-Which should result in response similar to the following (removed `input` content for brevity):
-
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
 
 ### Local development alternative (not recommended)
 
-Alternatively, it is also possible to invoke your function by using the following command:
+Alternativamente, también es posible invocar su función usando el siguiente comando:
 
 ```bash
 serverless invoke local --function hello
 ```
 
-Which should result in response similar to the following:
+Lo que debería resultar en una respuesta similar a la siguiente:
 
 ```
 {
@@ -118,4 +140,4 @@ Which should result in response similar to the following:
 }
 ```
 
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
+Para más información sobre las capacidades de `serverless-offline`, consultar (https://github.com/dherault/serverless-offline).
