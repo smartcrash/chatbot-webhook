@@ -64,10 +64,17 @@ Luego ingresa a http://localhost:3000/dev/chatbotConfig para actualizar el globa
 
 ### Probar un Chatbot con webhooks
 
-Una vez configurado los webhooks ingresa a https://lw.stagecliengo.com/?websiteId=`websiteId` para probar tu chatbot y recibir un webhook por cada mensaje en tu server 
+Una vez configurado los webhooks ingresa a https://lw.stagecliengo.com/?websiteId=`websiteId` para probar tu chatbot y recibir un webhook por cada mensaje en tu server.
+
+![image](https://user-images.githubusercontent.com/660790/130870131-b175fb40-2a42-458a-a5f5-9e1254e7d06e.png)
+
+Esto fue en respuesta a este JSON:
+
+![image](https://user-images.githubusercontent.com/660790/130870251-53d5979e-64a7-48f8-a14b-cc3f48a8ae3e.png)
 
 
-### Deployment
+
+### Deployment con Serverless
 
 Este ejemplo está diseñado para funcionar con el panel de Serverless Framework que incluye funciones avanzadas como CI / CD, monitoreo, métricas, etc.
 
@@ -114,9 +121,7 @@ layers:
 
 _Nota_: En su forma actual, después de la implementación, su API es pública y cualquier persona puede invocarla. Para implementaciones de producción, es posible que desee configurar un autorizador. Para obtener detalles sobre cómo hacerlo, consulte [http event docs] (https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
 
-### Invocation
-
-Después de una implementación exitosa, puede llamar a la aplicación creada a través de HTTP:
+Después del deploy exitoso, puede llamar a la aplicación a través de:
 
 ```bash
 curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/...
