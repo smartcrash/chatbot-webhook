@@ -55,7 +55,7 @@ Para simplificar la configuración de `global_fulfillment_url` (es la url donde 
 
 Configure con los datos de su cuenta de Cliengo en el archivo `handler.js` lo valores:
 - API_KEY: [cómo obtenerla?](https://help.cliengo.com/hc/es/articles/1260801736410--C%C3%B3mo-obtener-la-API-KEY-de-Cliengo-)
-- websiteId: Puedes encontrarlo en (https://api.cliengo.com/1.0/websites) o en las urls de tu chat en cliengo
+- websiteId: Puedes encontrarlo en https://api.cliengo.com/1.0/websites (debes estar logueado con tu cuenta)
 - global_fulfillment_url: la url de tu webhook
 
 
