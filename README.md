@@ -54,9 +54,9 @@ ngrok http 3000
 Para simplificar la configuración de `global_fulfillment_url` (es la url donde se recibirán los webhooks de un determinado chatbot) existe en este proyecto un endpoint para facilitar su configuración
 
 Configure con los datos de su cuenta de Cliengo en el archivo `handler.js` lo valores:
-- API_KEY: [cómo obtenerla?](https://help.cliengo.com/hc/es/articles/1260801736410--C%C3%B3mo-obtener-la-API-KEY-de-Cliengo-)
-- websiteId: Puedes encontrarlo en https://api.cliengo.com/1.0/websites (debes estar logueado con tu cuenta)
-- global_fulfillment_url: la url de tu webhook
+- **API_KEY**: [cómo obtenerla?](https://help.cliengo.com/hc/es/articles/1260801736410--C%C3%B3mo-obtener-la-API-KEY-de-Cliengo-)
+- **websiteId**: Puedes encontrarlo en https://api.cliengo.com/1.0/websites (debes estar logueado con tu cuenta)
+- **global_fulfillment_url**: la url de tu webhook
 
 
 Luego ingresa a http://localhost:3000/dev/chatbotConfig para actualizar el global_fulfillment_url de tu chatbot.
