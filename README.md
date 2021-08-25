@@ -66,11 +66,14 @@ Luego ingresa a http://localhost:3000/dev/chatbotConfig para actualizar el globa
 
 Una vez configurado los webhooks ingresa a https://lw.stagecliengo.com/?websiteId=`websiteId` para probar tu chatbot y recibir un webhook por cada mensaje en tu server.
 
-![image](https://user-images.githubusercontent.com/660790/130870131-b175fb40-2a42-458a-a5f5-9e1254e7d06e.png)
-
-Esto fue en respuesta a este JSON:
+Como ejemplo, al recibir un webhook nuestro endpoint responde este JSON:
 
 ![image](https://user-images.githubusercontent.com/660790/130870251-53d5979e-64a7-48f8-a14b-cc3f48a8ae3e.png)
+
+Y en el chat se ve así:
+
+![image](https://user-images.githubusercontent.com/660790/130870131-b175fb40-2a42-458a-a5f5-9e1254e7d06e.png)
+
 
 
 

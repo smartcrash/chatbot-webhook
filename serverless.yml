@@ -15,11 +15,20 @@ functions:
       - http:
           path: /chatbotWebhook
           method: post
+      - http:
+          path: /chatbotWebhook
+          method: get
   chatbotConfig:
     handler: handler.chatbotConfig
     events:
       - http:
           path: /chatbotConfig
+          method: get
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: /
           method: get
           
 

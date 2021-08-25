@@ -31,7 +31,7 @@ module.exports.chatbotWebhook = async (event) => {
             "text": ["La hora es " + new Date().toLocaleString("en-US")],
             "response_type": 'LIST',
             "response_options": ["Model A", "Model B"],
-            //"stopChat": true,
+            "stopChat": true,
             //"flow": 5
         }
       },
@@ -48,13 +48,7 @@ module.exports.chatbotWebhook = async (event) => {
  */ 
 module.exports.chatbotConfig = async (event) => {
 
-  const fetch = require('node-fetch');
-  const API_KEY="d53ab56d-7b4a-491b-b8c3-41e260e991f1"
-  const websiteId="60e5b8c52c6d8d0026157734" 
-  const global_fulfillment_url = 'https://cae1-152-168-79-85.ngrok.io/dev/chatbotWebhook'
-  const baseUrl = "https://api.stagecliengo.com" // "https://api.cliengo.com"
-
-  
+ 
   try {
     var jwt = ""
     //busco un JWT para este user represetado por la API_KEY
@@ -89,4 +83,17 @@ module.exports.chatbotConfig = async (event) => {
     console.log(error)
   }
 
+};
+
+module.exports.hello = async (event) => {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        {
+          message: 'Hello Cliengo world!',
+        },
+        null,
+        2
+      ),
+    };
 };
