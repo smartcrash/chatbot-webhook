@@ -143,8 +143,7 @@ Lo que debería resultar en una respuesta similar a la siguiente:
 
 ```
 {
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v2.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
+  "message": "Hello Cliengo world!"
 }
 ```
 
