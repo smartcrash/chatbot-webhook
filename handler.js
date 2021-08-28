@@ -1,5 +1,7 @@
 "use strict";
 
+const fetch = require('node-fetch')
+
 /**
  * Documentación de request y response para chatbot webhooks
  * https://developers.cliengo.com/docs/new-message-webhook#response-json-example
