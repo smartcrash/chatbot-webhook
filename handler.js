@@ -2,6 +2,8 @@
 
 const fetch = require('node-fetch')
 
+const baseUrl = 'https://api.stagecliengo.com'
+
 /**
  * Documentación de request y response para chatbot webhooks
  * https://developers.cliengo.com/docs/new-message-webhook#response-json-example
