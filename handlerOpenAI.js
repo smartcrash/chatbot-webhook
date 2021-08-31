@@ -8,7 +8,6 @@ const openai = new OpenAI(process.env.OPENAI_SECRET);
 /**
  * Documentación de request y response para chatbot webhooks
  * https://developers.cliengo.com/docs/new-message-webhook#response-json-example
- * 
  */ 
 module.exports.chatbotWebhookOpenAI = async (event) => {
 
@@ -18,10 +17,10 @@ module.exports.chatbotWebhookOpenAI = async (event) => {
   
   const lastMsg = chatLog[chatLog.length - 1]
 
-  let prompt = 'La siguiente es una conversación con un asistente virtual Argentino. El asistente es útil, creativo, inteligente y muy amigable.\n\n'+
-  'IA: Hola, estoy conectada, de qué modo te puedo ayudar? \n'+
-  'Humano: ' + lastMsg.text + '\n'+
-  'IA:'
+  let prompt = 'La siguiente es una conversación entre un Cliente y la Asistente de ventas de una empresa. La Asistente es útil, creativa, inteligente y muy amigable.\n\n'+
+  'Asistente: Hola, estoy conectada, de qué modo te puedo ayudar? \n'+
+  'Cliente: ' + lastMsg.text + '\n'+
+  'Asistente:'
 
   console.log(prompt)
 
@@ -38,29 +37,10 @@ module.exports.chatbotWebhookOpenAI = async (event) => {
     statusCode: 200,
     body: JSON.stringify(
       {
-        /*
-        "name": {
-          "value": "Juan Roman",
-        },
-        "email": {
-          "value": "juanroman@diez.com"
-        },
-        "phone": {
-          "national_format": "1234542123",
-          "international_format": "12343132112"
-        },
-        "custom": { 
-          "userType": "advanced",
-          "thing1": "something",
-          "thing2": "something"
-        },
-        */
         "response": {
             "text": [completion.choices[0].text],
-            "response_type": 'LIST',
-            "response_options": ["Model A", "Model B"],
-            "stopChat": true,
-            //"flow": 5
+            "response_type": 'TEXT',
+            "stopChat": true
         }
       },
       null,
@@ -83,7 +63,7 @@ module.exports.helloOpenAI = async (event) => {
      'Si bien muchas personas mantienen una conversación con el chat, solamente aquellos que dejen un dato de contacto (email y/o telefono) serán contabilizados.',
      'Un Contacto Cliengo es simplemente una persona que visita tu sitio web, interactúa con el chat y deja sus datos de contacto (nombre, teléfono y e-mail), convirtiéndose así en un potencial cliente.'
     ],
-    question: 'y cuanto cuesta el servicio?',
+    question: 'cuanto cuesta el servicio?',
     search_model: 'ada',
     model: 'curie',
     examples_context: 'En 2017, la esperanza de vida en Estados Unidos era de 78,6 años.',
@@ -97,7 +77,6 @@ module.exports.helloOpenAI = async (event) => {
       statusCode: 200,
       body: JSON.stringify(
         {
-          //message: 'Hello Cliengo world!',
           message: JSON.stringify(answer),
         },
         null,
