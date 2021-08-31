@@ -2,6 +2,8 @@ service: aws-node-rest-api
 
 frameworkVersion: '2'
 
+useDotenv: true
+
 
 provider:
   name: aws
@@ -30,6 +32,18 @@ functions:
       - http:
           path: /
           method: get
+  chatbotWebhookOpenIA:
+    handler: handlerOpenAI.chatbotWebhookOpenAI
+    events:
+      - http:
+          path: /openia/chatbotWebhook
+          method: post
+  helloOpenIA:
+    handler: handlerOpenAI.helloOpenAI
+    events:
+      - http:
+          path: /openia/
+          method: get          
           
 
 plugins:
