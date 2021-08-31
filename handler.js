@@ -49,8 +49,8 @@ module.exports.chatbotWebhook = async (event) => {
  */ 
 module.exports.chatbotConfig = async (event) => {
 
-  const API_KEY="d53ab56d-7b4a-491b-b8c3-41e260e991f1"
-  const websiteId="60e5b8c52c6d8d0026157734" 
+  const API_KEY = "d53ab56d-7b4a-491b-b8c3-41e260e991f1"
+  const websiteId = process.env.WEBSITE_ID || "60e5b8c52c6d8d0026157734" 
   const global_fulfillment_url = 'https://cae1-152-168-79-85.ngrok.io/dev/chatbotWebhook'
   const baseUrl = "https://api.stagecliengo.com" // "https://api.cliengo.com"
 
