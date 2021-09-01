@@ -1,5 +1,7 @@
 'use strict'
 const fetch = require('node-fetch')
+const chatbot = require('./lib/chatbot')
+const gsheet = require('./lib/gsheet')
 
 /**
  * Documentación de request y response para chatbot webhooks
@@ -7,33 +9,31 @@ const fetch = require('node-fetch')
  *
  */
 module.exports.chatbotWebhook = async event => {
+  const { getLastMessage } = chatbot(event)
+
+  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SHEET_ID } = process.env
+
+  const { findRowByText } = await gsheet(GOOGLE_SHEET_ID, {
+    clientEmail: GOOGLE_CLIENT_EMAIL,
+    privateKey: GOOGLE_PRIVATE_KEY,
+  })
+
+  const messageText = getLastMessage(event).text
+
+  const row = await findRowByText(messageText)
+
+  let text
+
+  if (row) text = row[1]
+  else text = 'Not found'
+
   return {
     statusCode: 200,
     body: JSON.stringify(
       {
-        /*
-        "name": {
-          "value": "Juan Roman",
-        },
-        "email": {
-          "value": "juanroman@diez.com"
-        },
-        "phone": {
-          "national_format": "1234542123",
-          "international_format": "12343132112"
-        },
-        "custom": { 
-          "userType": "advanced",
-          "thing1": "something",
-          "thing2": "something"
-        },
-        */
         response: {
-          text: ['La hora es ' + new Date().toLocaleString('en-US')],
-          response_type: 'LIST',
-          response_options: ['Model A', 'Model B'],
+          text: [text],
           stopChat: true,
-          //"flow": 5
         },
       },
       null,
@@ -49,7 +49,7 @@ module.exports.chatbotWebhook = async event => {
 module.exports.chatbotConfig = async event => {
   const API_KEY = 'd53ab56d-7b4a-491b-b8c3-41e260e991f1'
   const websiteId = process.env.WEBSITE_ID || '60e5b8c52c6d8d0026157734'
-  const global_fulfillment_url = 'https://cae1-152-168-79-85.ngrok.io/dev/chatbotWebhook'
+  const global_fulfillment_url = 'https://bh8nb08hah.execute-api.us-east-1.amazonaws.com/dev/chatbotWebhook'
   const baseUrl = 'https://api.stagecliengo.com' // "https://api.cliengo.com"
 
   try {
