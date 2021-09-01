@@ -3,7 +3,8 @@
   "description": "",
   "version": "0.1.0",
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "openai": "0.0.8"
   },
   "devDependencies": {
     "serverless": "^2.55.0",
