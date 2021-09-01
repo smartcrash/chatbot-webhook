@@ -19,13 +19,8 @@ module.exports.chatbotWebhook = async event => {
   })
 
   const messageText = getLastMessage(event).text
-
   const row = await findRowByText(messageText)
-
-  let text
-
-  if (row) text = row[1]
-  else text = 'Not found'
+  const text = row ? row[1] : ''
 
   return {
     statusCode: 200,
