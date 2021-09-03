@@ -3,11 +3,14 @@
   "description": "",
   "version": "0.1.0",
   "dependencies": {
+    "fast-fuzzy": "^1.10.10",
+    "google-spreadsheet": "^3.1.15",
     "node-fetch": "^2.6.1",
     "openai": "0.0.8"
   },
   "devDependencies": {
     "serverless": "^2.55.0",
+    "serverless-dotenv-plugin": "^3.9.0",
     "serverless-offline": "^8.0.0"
   }
 }
