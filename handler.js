@@ -1,7 +1,7 @@
 'use strict'
 const fetch = require('node-fetch')
 const chatbot = require('./lib/chatbot')
-const gsheet = require('./lib/gsheet')
+const Pipeline = require('./lib/pipeline')
 
 /**
  * Documentación de request y response para chatbot webhooks
@@ -9,31 +9,30 @@ const gsheet = require('./lib/gsheet')
  *
  */
 module.exports.chatbotWebhook = async event => {
-  const { getLastMessage } = chatbot(event)
+  const { body } = chatbot(event)
 
-  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SHEET_ID } = process.env
-
-  const { findRowByText } = await gsheet(GOOGLE_SHEET_ID, {
-    clientEmail: GOOGLE_CLIENT_EMAIL,
-    privateKey: GOOGLE_PRIVATE_KEY,
+  const conversation = Pipeline(({ request, currentStep, response }, next) => {
+    response.custom.current_step = currentStep + 1
+    response.response.text = [String(response.custom.current_step)]
   })
 
-  const messageText = getLastMessage(event).text
-  const row = await findRowByText(messageText)
-  const text = row ? row[1] : ''
+  const response = {
+    custom: {},
+    response: {
+      text: [],
+      stopChat: true,
+    },
+  }
+
+  conversation.execute({
+    request: body,
+    currentStep: body.collected_data?.custom?.current_step || 0,
+    response,
+  })
 
   return {
     statusCode: 200,
-    body: JSON.stringify(
-      {
-        response: {
-          text: [text],
-          stopChat: true,
-        },
-      },
-      null,
-      2
-    ),
+    body: JSON.stringify(response, null, 2),
   }
 }
 
@@ -44,7 +43,9 @@ module.exports.chatbotWebhook = async event => {
 module.exports.chatbotConfig = async event => {
   const API_KEY = 'd53ab56d-7b4a-491b-b8c3-41e260e991f1'
   const websiteId = process.env.WEBSITE_ID || '60e5b8c52c6d8d0026157734'
-  const global_fulfillment_url = 'https://bh8nb08hah.execute-api.us-east-1.amazonaws.com/dev/chatbotWebhook'
+  const global_fulfillment_url =
+    'http://5dbf-190-205-96-244.ngrok.io/dev/chatbotWebhook' ||
+    'https://bh8nb08hah.execute-api.us-east-1.amazonaws.com/dev/chatbotWebhook'
   const baseUrl = 'https://api.stagecliengo.com' // "https://api.cliengo.com"
 
   try {
@@ -60,9 +61,7 @@ module.exports.chatbotConfig = async event => {
     await fetch(baseUrl + '/1.0/projects/' + websiteId + '/chatbots/chatId', {
       headers: { cookie: 'jwt=' + jwt, 'Content-Type': 'application/json' },
       method: 'PATCH',
-      body: JSON.stringify({
-        global_fulfillment_url: global_fulfillment_url,
-      }),
+      body: JSON.stringify({ global_fulfillment_url }),
     })
       .then(res => res.json())
       .then(json => {
