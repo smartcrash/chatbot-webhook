@@ -75,7 +75,7 @@ module.exports.chatbotWebhook = async event => {
     custom: {},
     response: {
       text: [],
-      // stopChat: true,
+      stopChat: true,
     },
   }
 
