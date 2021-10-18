@@ -13,6 +13,8 @@ const isName = (string = '') => {
   return true
 }
 
+const getCustomer = () => fetch('https://cliengo.free.beeceptor.com/clients/libgot/customers').then(res => res.json())
+
 /**
  * Documentación de request y response para chatbot webhooks
  * https://developers.cliengo.com/docs/new-message-webhook#response-json-example
@@ -22,33 +24,42 @@ module.exports.chatbotWebhook = async event => {
   const { body, getLastMessage } = chatbot(event)
 
   const conversation = Pipeline(
+    /**
+     * Saludo y pregusta por el DNI
+     */
     ({ request, currentStep, response }, next) => {
       if (isDNI(request.collected_data.custom.dni)) return next()
-      if (currentStep === 0) return next()
+      if (currentStep >= 0) return next()
 
-      response.custom.current_step = 0
+      response.custom.current_step = 1
       response.response.text = [`Hola, soy ${request.chatbotName}`, 'Por favor, ingresa tu DNI']
     },
+    /**
+     *  Valida el DNI, si es valido pregunta por el nombre y apellido
+     */
     ({ request, currentStep, response }, next) => {
       if (isDNI(request.collected_data.custom.dni)) return next()
-      if (currentStep === 1) return next()
+      if (currentStep >= 1) return next()
 
       const { text: lastMessage } = getLastMessage()
 
       if (isDNI(lastMessage)) {
         // TODO: Write in DB
 
-        response.custom.current_step = 1
+        response.custom.current_step = 2
         response.custom.dni = lastMessage
         response.response.text = ['Gracias', 'Ahora dime tu nombre y apellido por favor']
       } else {
         response.response.text = ['Por favor ingresa un DNI válido']
       }
     },
-    ({ request, currentStep, response }, next) => {
+    /**
+     *  Valida el nombre y apellido
+     */
+    async ({ request, currentStep, response }, next) => {
       if (isName(request.collected_data.custom.first_name) && isName(request.collected_data.custom.last_name))
         return next()
-      if (currentStep === 2) return next()
+      if (currentStep >= 2) return next()
 
       const { text: lastMessage } = getLastMessage()
       const [firstName, lastName] = lastMessage
@@ -57,17 +68,73 @@ module.exports.chatbotWebhook = async event => {
         .filter(s => !!s)
 
       if (isName(firstName) && isName(lastName)) {
-        // TODO: Write in DB
-
-        response.custom.current_step = 2
+        response.custom.current_step = 3
         response.custom.first_name = firstName
         response.custom.last_name = lastName
-        response.response.text = ['Se esta procesando su solicitud']
-
-        // TODO: Mostart situacion de credito
+        next()
       } else {
         response.response.text = ['Por favor dime tu nombre y apellido']
       }
+    },
+    /**
+     *  Response con el estado de cuenta y con el listado de ofertas
+     */
+    async ({ request, currentStep, response }, next) => {
+      if (request.collected_data.custom.offer_id) return next()
+      if (currentStep >= 3) return next()
+
+      const customer = await getCustomer()
+      const { prestamos = [], ofertas = [] } = customer
+
+      response.response.text = ['Situación de crédito actual:', ...prestamos.map(o => o.estado_prestamo)]
+
+      if (ofertas.length) {
+        response.response.text.push('Ofertas con detalles de cuotas:')
+        response.response.response_type = 'LIST'
+        response.response.response_options = [...ofertas.map((o, index) => `#${index + 1} - ${o.oferta}`)]
+      }
+
+      response.custom.current_step = 4
+    },
+    /**
+     *  Valida oferta seleccionada
+     */
+    async ({ request, currentStep, response }, next) => {
+      if (request.collected_data.custom.offer_id) return next()
+      if (currentStep >= 4) return next()
+
+      const customer = await getCustomer()
+      const { ofertas = [] } = customer
+      const { text: lastMessage } = getLastMessage()
+
+      if (/^#\d\s-/.test(lastMessage)) {
+        const offerIndex = Number(lastMessage.trim().slice(1, lastMessage.indexOf(' ')))
+        const { offerId } = ofertas[offerIndex] || {}
+
+        if (offerId) {
+          response.custom.current_step = 5
+          response.custom.offer_id = offerId
+          response.response.text = ['Indicar CBU']
+        }
+      } else {
+        response.response.text = ['Por favor elige una de nuestras ofertas:']
+        response.response.response_type = 'LIST'
+        response.response.response_options = [...ofertas.map((o, index) => `#${index + 1} - ${o.oferta}`)]
+      }
+    },
+    /**
+     * Tomar CBU
+     */
+    async ({ request, currentStep, response }, next) => {
+      if (request.collected_data.custom.cbu) return next()
+      if (currentStep >= 5) return next()
+
+      const { text: lastMessage } = getLastMessage()
+
+      response.custom.current_step = 6
+      response.custom.current_step = 5
+      response.custom.offer_id = offerId
+      response.response.text = ['Indicar CBU']
     }
   )
 
@@ -79,11 +146,13 @@ module.exports.chatbotWebhook = async event => {
     },
   }
 
-  conversation.execute({
+  await conversation.execute({
     request: body,
     currentStep: Number(body.collected_data?.custom?.current_step) || -1,
     response,
   })
+
+  console.log(response)
 
   return {
     statusCode: 200,
