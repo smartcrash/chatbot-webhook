@@ -6,6 +6,8 @@ const Pipeline = require('./lib/pipeline')
 const isDNI = string => /^([0-9]{8})[a-zA-Z]$/.test(string)
 
 const isName = (string = '') => {
+  if (!string) return false
+
   string = string.trim()
 
   if (!string) return false
@@ -39,7 +41,7 @@ module.exports.chatbotWebhook = async event => {
      */
     ({ request, currentStep, response }, next) => {
       if (isDNI(request.collected_data.custom.dni)) return next()
-      if (currentStep >= 1) return next()
+      if (currentStep > 1) return next()
 
       const { text: lastMessage } = getLastMessage()
 
@@ -59,7 +61,7 @@ module.exports.chatbotWebhook = async event => {
     async ({ request, currentStep, response }, next) => {
       if (isName(request.collected_data.custom.first_name) && isName(request.collected_data.custom.last_name))
         return next()
-      if (currentStep >= 2) return next()
+      if (currentStep > 2) return next()
 
       const { text: lastMessage } = getLastMessage()
       const [firstName, lastName] = lastMessage
@@ -71,7 +73,9 @@ module.exports.chatbotWebhook = async event => {
         response.custom.current_step = 3
         response.custom.first_name = firstName
         response.custom.last_name = lastName
-        next()
+
+        // Ir al siguente paso
+        return next()
       } else {
         response.response.text = ['Por favor dime tu nombre y apellido']
       }
@@ -81,7 +85,7 @@ module.exports.chatbotWebhook = async event => {
      */
     async ({ request, currentStep, response }, next) => {
       if (request.collected_data.custom.offer_id) return next()
-      if (currentStep >= 3) return next()
+      if (currentStep > 3) return next()
 
       const customer = await getCustomer()
       const { prestamos = [], ofertas = [] } = customer
@@ -101,7 +105,7 @@ module.exports.chatbotWebhook = async event => {
      */
     async ({ request, currentStep, response }, next) => {
       if (request.collected_data.custom.offer_id) return next()
-      if (currentStep >= 4) return next()
+      if (currentStep > 4) return next()
 
       const customer = await getCustomer()
       const { ofertas = [] } = customer
@@ -127,7 +131,7 @@ module.exports.chatbotWebhook = async event => {
      */
     async ({ request, currentStep, response }, next) => {
       if (request.collected_data.custom.cbu) return next()
-      if (currentStep >= 5) return next()
+      if (currentStep > 5) return next()
 
       const { text: lastMessage = '' } = getLastMessage()
 
@@ -139,7 +143,7 @@ module.exports.chatbotWebhook = async event => {
       }
     },
     async ({ request, currentStep, response }, next) => {
-      if (currentStep >= 6) return next()
+      if (currentStep > 6) return next()
 
       const { cbu } = request.collected_data.custom
 
