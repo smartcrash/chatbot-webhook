@@ -129,12 +129,42 @@ module.exports.chatbotWebhook = async event => {
       if (request.collected_data.custom.cbu) return next()
       if (currentStep >= 5) return next()
 
-      const { text: lastMessage } = getLastMessage()
+      const { text: lastMessage = '' } = getLastMessage()
 
-      response.custom.current_step = 6
-      response.custom.current_step = 5
-      response.custom.offer_id = offerId
-      response.response.text = ['Indicar CBU']
+      if (lastMessage.trim()) {
+        response.custom.current_step = 6
+        response.custom.cbu = lastMessage.trim()
+      } else {
+        response.response.text = ['Por favor ingresa tu CBU']
+      }
+    },
+    async ({ request, currentStep, response }, next) => {
+      if (currentStep >= 6) return next()
+
+      const { cbu } = request.collected_data.custom
+
+      response.custom.current_step = 7
+      response.response.text = [`Este es tu CBU? ${cbu}`]
+      response.response.response_type = 'LIST'
+      response.response.response_options = ['Si', 'No']
+    },
+
+    async ({ request, currentStep, response }, next) => {
+      if (currentStep > 7) return next()
+
+      const { text: lastMessage = '' } = getLastMessage()
+      const { cbu } = request.collected_data.custom
+
+      if (lastMessage.trim().toUpperCase() === 'SI') {
+        response.custom.current_step = 8
+
+        // TODO: Hacer algo con el CBU
+        console.log('cbu :>>', cbu)
+        response.response.text = ['Detalle de la operación', 'Mensaje de fin']
+      } else {
+        response.custom.current_step = 5
+        response.response.text = ['Por favor ingresa tu CBU']
+      }
     }
   )
 
