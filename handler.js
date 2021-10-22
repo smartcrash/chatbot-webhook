@@ -96,6 +96,8 @@ module.exports.chatbotWebhook = async event => {
         response.response.text.push('Ofertas con detalles de cuotas:')
         response.response.response_type = 'LIST'
         response.response.response_options = [...ofertas.map((o, index) => `#${index + 1} - ${o.oferta}`)]
+      } else {
+        // TODO: Handle else case
       }
 
       response.custom.current_step = 4
@@ -119,12 +121,17 @@ module.exports.chatbotWebhook = async event => {
           response.custom.current_step = 5
           response.custom.offer_id = offerId
           response.response.text = ['Indicar CBU']
+          return
         }
-      } else {
-        response.response.text = ['Por favor elige una de nuestras ofertas:']
-        response.response.response_type = 'LIST'
-        response.response.response_options = [...ofertas.map((o, index) => `#${index + 1} - ${o.oferta}`)]
       }
+
+      console.log('ERROR: offerId not found:')
+      console.log('lastMessage :>>', lastMessage)
+      console.log('ofertas :>>', ofertas)
+
+      response.response.text = ['Por favor elige una de nuestras ofertas:']
+      response.response.response_type = 'LIST'
+      response.response.response_options = [...ofertas.map((o, index) => `#${index + 1} - ${o.oferta}`)]
     },
     /**
      * Tomar CBU
@@ -173,7 +180,7 @@ module.exports.chatbotWebhook = async event => {
   )
 
   const response = {
-    custom: {},
+    custom: body.collected_data?.custom || {},
     response: {
       text: [],
       stopChat: true,
