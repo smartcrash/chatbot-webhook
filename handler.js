@@ -113,8 +113,11 @@ module.exports.chatbotWebhook = async event => {
       const { ofertas = [] } = customer
       const { text: lastMessage } = getLastMessage()
 
-      if (/^#\d\s-/.test(lastMessage)) {
-        const offerIndex = Number(lastMessage.trim().slice(1, lastMessage.indexOf(' ')))
+      if (/#\d\s-/.test(lastMessage)) {
+        // Extrae el index de la oferta de la respuesta
+        const offerIndex = Number(
+          lastMessage.trim().slice(lastMessage.indexOf('#') + 1, lastMessage.indexOf(' ', lastMessage.indexOf('#') + 1))
+        )
         const { offerId } = ofertas[offerIndex] || {}
 
         if (offerId) {
@@ -128,6 +131,8 @@ module.exports.chatbotWebhook = async event => {
       console.log('ERROR: offerId not found:')
       console.log('lastMessage :>>', lastMessage)
       console.log('ofertas :>>', ofertas)
+      console.log('TEST :>>', /^#\d\s-/.test(lastMessage))
+      console.log('offerIndex: >>', Number(lastMessage.trim().slice(1, lastMessage.indexOf(' '))))
 
       response.response.text = ['Por favor elige una de nuestras ofertas:']
       response.response.response_type = 'LIST'
@@ -142,9 +147,12 @@ module.exports.chatbotWebhook = async event => {
 
       const { text: lastMessage = '' } = getLastMessage()
 
+      console.log('FO :>>', lastMessage)
+
       if (lastMessage.trim()) {
         response.custom.current_step = 6
         response.custom.cbu = lastMessage.trim()
+        next()
       } else {
         response.response.text = ['Por favor ingresa tu CBU']
       }
@@ -152,10 +160,10 @@ module.exports.chatbotWebhook = async event => {
     async ({ request, currentStep, response }, next) => {
       if (currentStep > 6) return next()
 
-      const { cbu } = request.collected_data.custom
+      const cbu = response.custom.cbu || request.collected_data.custom.cbu
 
       response.custom.current_step = 7
-      response.response.text = [`Este es tu CBU? ${cbu}`]
+      response.response.text = [`Este es tu CBU? "${cbu}"`]
       response.response.response_type = 'LIST'
       response.response.response_options = ['Si', 'No']
     },
@@ -175,6 +183,7 @@ module.exports.chatbotWebhook = async event => {
       } else {
         response.custom.current_step = 5
         response.response.text = ['Por favor ingresa tu CBU']
+        response.custom.cbu = null
       }
     }
   )
