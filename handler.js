@@ -1,6 +1,7 @@
 'use strict'
 const fetch = require('node-fetch')
 const chatbot = require('./lib/chatbot')
+const gcalendar = require('./lib/gcalendar')
 const gsheet = require('./lib/gsheet')
 
 /**
@@ -9,25 +10,16 @@ const gsheet = require('./lib/gsheet')
  *
  */
 module.exports.chatbotWebhook = async event => {
-  const { getLastMessage } = chatbot(event)
+  const { listUpcomingEvents } = await gcalendar()
 
-  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SHEET_ID } = process.env
-
-  const { findRowByText } = await gsheet(GOOGLE_SHEET_ID, {
-    clientEmail: GOOGLE_CLIENT_EMAIL,
-    privateKey: GOOGLE_PRIVATE_KEY,
-  })
-
-  const messageText = getLastMessage(event).text
-  const row = await findRowByText(messageText)
-  const text = row ? row[1] : ''
+  console.log(await listUpcomingEvents())
 
   return {
     statusCode: 200,
     body: JSON.stringify(
       {
         response: {
-          text: [text],
+          text: ['foo'],
           stopChat: true,
         },
       },
