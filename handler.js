@@ -10,7 +10,12 @@ const gsheet = require('./lib/gsheet')
  *
  */
 module.exports.chatbotWebhook = async event => {
-  const { listUpcomingEvents } = await gcalendar()
+  const { listUpcomingEvents } = await gcalendar({
+    email: process.env.GOOGLE_CALENDAR_CLIENT_EMAIL,
+    key: process.env.GOOGLE_CALENDAR_PRIVATE_KEY,
+    calendarId: process.env.GOOGLE_CALENDAR_ID,
+    scopes: ['https://www.googleapis.com/auth/calendar'],
+  })
 
   console.log(await listUpcomingEvents())
 
