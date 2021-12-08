@@ -6,6 +6,7 @@
     "fast-fuzzy": "^1.10.10",
     "google-spreadsheet": "^3.1.15",
     "googleapis": "^92.0.0",
+    "luxon": "^2.1.1",
     "node-fetch": "^2.6.1",
     "openai": "0.0.8"
   },
