@@ -36,7 +36,7 @@ module.exports.chatbotWebhook = async event => {
 
     res.response.text = ['Que dia deseas hacer la cita?', 'Ingresa la fecha en el formato dd/mm/yyyy']
     res.custom.date_asked = true
-    res.custom.hour_askec = false
+    res.custom.hour_asked = false
   } else if (collected_data.hour_asked && collected_data.hour_slots?.length && collected_data.selected_date) {
     // Extract the selected hour range from last message
 
