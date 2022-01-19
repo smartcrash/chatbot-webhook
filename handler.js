@@ -35,12 +35,16 @@ module.exports.chatbotWebhook = async event => {
   if (!(order === 0 && !empty(Object.keys(custom))) && order < 6) {
     return {
       statusCode: 200,
-      body: {
-        response: {
-          text: [],
-          stopChat: false,
+      body: JSON.stringify(
+        {
+          response: {
+            text: [],
+            stopChat: false,
+          },
         },
-      },
+        null,
+        2
+      ),
     }
   }
 
@@ -76,8 +80,8 @@ module.exports.chatbotWebhook = async event => {
       }
     }
 
-    const timeMin = dateTime.startOf('day').toISO()
-    const timeMax = dateTime.endOf('day').toISO()
+    const timeMin = dateTime.set({ hour: 8, minute: 0 }).toISO()
+    const timeMax = dateTime.set({ hour: 8, minute: 0 }).plus({ hours: 10 }).toISO()
     const { hourSlots } = await getFreeSlots(timeMin, timeMax)
 
     if (hourSlots.length) {
@@ -182,7 +186,7 @@ module.exports.chatbotWebhook = async event => {
 module.exports.chatbotConfig = async event => {
   const API_KEY = 'd53ab56d-7b4a-491b-b8c3-41e260e991f1'
   const websiteId = process.env.WEBSITE_ID || '60e5b8c52c6d8d0026157734'
-  const global_fulfillment_url = process.env.FULLFILMENT_URL || 'http://02f4-190-205-96-243.ngrok.io/dev/chatbotWebhook'
+  const global_fulfillment_url = process.env.FULLFILMENT_URL || 'http://df9a-190-205-98-122.ngrok.io/dev/chatbotWebhook'
   const baseUrl = 'https://api.stagecliengo.com' // "https://api.cliengo.com"
 
   try {
