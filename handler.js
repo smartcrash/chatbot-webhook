@@ -17,6 +17,15 @@ const createDescription = ({ name, email, phone }) => {
   return `Nombre del cliente: ${name}, email: ${email}${phone ? `, Teléfono: ${phone}` : ''}`
 }
 
+const createFinalMessage = ({ serviceName, name, phone, email, selectedDate, startHour, endHour }) => {
+  return [
+    `Se a creado una cita para "${serviceName}" a nombre de ${name}`,
+    phone ? `teléfono: ${phone}` : null,
+    email ? `email: ${email}` : null,
+    `para el ${selectedDate.toLocaleString()} de las ${startHour.toFormat('t')} hasta las ${endHour.toFormat('t')}`,
+  ].filter(x => !!x)
+}
+
 const empty = (x = []) => !x.length
 
 /**
@@ -164,10 +173,15 @@ module.exports.chatbotWebhook = async event => {
         ],
       },
     })
-    res.response.text = [
-      'Se a creado una cita para el:',
-      `${selectedDate.toLocaleString()} de las ${startHour.toFormat('t')} hasta las ${endHour.toFormat('t')}`,
-    ]
+    res.response.text = createFinalMessage({
+      serviceName,
+      name,
+      phone,
+      email,
+      selectedDate,
+      startHour,
+      endHour,
+    })
   } catch (error) {
     console.error(error)
     res.response.text = ['Hubo un error al crear la cita. Por favor intentalo mas tarde']
